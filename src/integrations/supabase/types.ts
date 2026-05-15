@@ -14,7 +14,156 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      articles: {
+        Row: {
+          content: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          image: string | null
+          published_at: string
+          slug: string
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image?: string | null
+          published_at?: string
+          slug: string
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          image?: string | null
+          published_at?: string
+          slug?: string
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      banner: {
+        Row: {
+          cta_link: string
+          cta_text: string
+          headline: string
+          id: number
+          image: string
+          subheadline: string
+          updated_at: string
+        }
+        Insert: {
+          cta_link?: string
+          cta_text?: string
+          headline?: string
+          id?: number
+          image?: string
+          subheadline?: string
+          updated_at?: string
+        }
+        Update: {
+          cta_link?: string
+          cta_text?: string
+          headline?: string
+          id?: number
+          image?: string
+          subheadline?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          parent_group: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          parent_group?: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          parent_group?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string | null
+          category_slug: string | null
+          created_at: string
+          demo_url: string | null
+          description: string | null
+          gallery: string[]
+          id: string
+          image: string | null
+          long_description: string | null
+          price: string | null
+          title: string
+          updated_at: string
+          whatsapp_message: string | null
+        }
+        Insert: {
+          category?: string | null
+          category_slug?: string | null
+          created_at?: string
+          demo_url?: string | null
+          description?: string | null
+          gallery?: string[]
+          id?: string
+          image?: string | null
+          long_description?: string | null
+          price?: string | null
+          title: string
+          updated_at?: string
+          whatsapp_message?: string | null
+        }
+        Update: {
+          category?: string | null
+          category_slug?: string | null
+          created_at?: string
+          demo_url?: string | null
+          description?: string | null
+          gallery?: string[]
+          id?: string
+          image?: string | null
+          long_description?: string | null
+          price?: string | null
+          title?: string
+          updated_at?: string
+          whatsapp_message?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
