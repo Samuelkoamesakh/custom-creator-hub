@@ -1,17 +1,26 @@
-import { useState } from 'react';
-import { getBanner, saveBanner, type Banner } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { fetchBanner, saveBanner, type Banner } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 
 export default function AdminBannerPage() {
-  const [form, setForm] = useState<Banner>(getBanner());
+  const [form, setForm] = useState<Banner>({ headline: '', subheadline: '', ctaText: '', ctaLink: '/katalog', image: '' });
+  const [loading, setLoading] = useState(true);
 
-  const handleSave = () => {
-    saveBanner(form);
-    toast.success('Banner diupdate!');
+  useEffect(() => {
+    fetchBanner().then(b => { setForm(b); setLoading(false); });
+  }, []);
+
+  const handleSave = async () => {
+    try {
+      await saveBanner(form);
+      toast.success('Banner diupdate!');
+    } catch (e: any) { toast.error(e.message || 'Gagal menyimpan'); }
   };
+
+  if (loading) return <div className="text-muted-foreground">Memuat...</div>;
 
   return (
     <div>

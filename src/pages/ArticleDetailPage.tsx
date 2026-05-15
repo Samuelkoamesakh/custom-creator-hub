@@ -1,10 +1,19 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getArticleBySlug } from '@/lib/data';
+import { fetchArticleBySlug, type Article } from '@/lib/data';
 import { ArrowLeft, Calendar } from 'lucide-react';
 
 export default function ArticleDetailPage() {
   const { slug } = useParams();
-  const article = getArticleBySlug(slug || '');
+  const [article, setArticle] = useState<Article | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!slug) return;
+    fetchArticleBySlug(slug).then(a => { setArticle(a); setLoading(false); });
+  }, [slug]);
+
+  if (loading) return <div className="py-20 text-center text-muted-foreground">Memuat...</div>;
 
   if (!article) {
     return (

@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getCategories, getProductsByCategory, getProducts } from '@/lib/data';
+import { fetchCategories, fetchProductsByCategory, type Category, type Product } from '@/lib/data';
 import ProductCard from '@/components/ProductCard';
 import { motion } from 'framer-motion';
 
@@ -10,15 +11,20 @@ const fadeUp = {
 
 export default function CatalogPage() {
   const { group, slug } = useParams();
-  const categories = getCategories();
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => { fetchCategories().then(setCategories); }, []);
+  useEffect(() => {
+    if (slug) fetchProductsByCategory(slug).then(setProducts);
+    else setProducts([]);
+  }, [slug]);
 
   let filteredCategories = categories;
   if (group === 'undangan-online') filteredCategories = categories.filter(c => c.parentGroup === 'undangan-online');
   else if (group === 'custom-printing') filteredCategories = categories.filter(c => c.parentGroup === 'custom-printing');
 
-  // If a specific category slug is provided
   if (slug) {
-    const products = getProductsByCategory(slug);
     const cat = categories.find(c => c.slug === slug);
     return (
       <div className="py-12">
@@ -40,7 +46,6 @@ export default function CatalogPage() {
     );
   }
 
-  // Show categories
   const title = group === 'undangan-online' ? 'Undangan Online' : group === 'custom-printing' ? 'Custom Printing' : 'Katalog Produk';
 
   return (
