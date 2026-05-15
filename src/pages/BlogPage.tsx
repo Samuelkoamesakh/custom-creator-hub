@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getArticles } from '@/lib/data';
+import { fetchArticles, type Article } from '@/lib/data';
 import { motion } from 'framer-motion';
 import { Calendar } from 'lucide-react';
 
@@ -9,7 +10,8 @@ const fadeUp = {
 };
 
 export default function BlogPage() {
-  const articles = getArticles();
+  const [articles, setArticles] = useState<Article[]>([]);
+  useEffect(() => { fetchArticles().then(setArticles); }, []);
 
   return (
     <div className="py-12">

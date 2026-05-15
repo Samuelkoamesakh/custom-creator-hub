@@ -1,33 +1,32 @@
-import { useState } from 'react';
-import { getCategories, saveCategories, type Category } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { fetchCategories, saveCategory, type Category } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { Plus, Pencil, X } from 'lucide-react';
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState(getCategories());
+  const [categories, setCategories] = useState<Category[]>([]);
   const [editing, setEditing] = useState<Category | null>(null);
   const [showForm, setShowForm] = useState(false);
 
   const empty: Category = { id: '', name: '', slug: '', description: '', icon: '', parentGroup: 'undangan-online' };
   const [form, setForm] = useState<Category>(empty);
 
-  const openNew = () => { setForm({ ...empty, id: Date.now().toString() }); setEditing(null); setShowForm(true); };
+  const reload = () => fetchCategories().then(setCategories);
+  useEffect(() => { reload(); }, []);
+
+  const openNew = () => { setForm({ ...empty }); setEditing(null); setShowForm(true); };
   const openEdit = (c: Category) => { setForm({ ...c }); setEditing(c); setShowForm(true); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name || !form.slug) { toast.error('Nama dan slug wajib diisi'); return; }
-    let updated: Category[];
-    if (editing) {
-      updated = categories.map(c => c.id === editing.id ? form : c);
-    } else {
-      updated = [...categories, form];
-    }
-    saveCategories(updated);
-    setCategories(updated);
-    setShowForm(false);
-    toast.success(editing ? 'Kategori diupdate!' : 'Kategori ditambahkan!');
+    try {
+      await saveCategory(form);
+      await reload();
+      setShowForm(false);
+      toast.success(editing ? 'Kategori diupdate!' : 'Kategori ditambahkan!');
+    } catch (e: any) { toast.error(e.message || 'Gagal menyimpan'); }
   };
 
   return (

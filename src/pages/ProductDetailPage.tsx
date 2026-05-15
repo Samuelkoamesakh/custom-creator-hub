@@ -1,13 +1,21 @@
+import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { getProductById, generateWhatsAppLink } from '@/lib/data';
+import { fetchProductById, generateWhatsAppLink, type Product } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ShoppingCart, Eye } from 'lucide-react';
-import { useState } from 'react';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
-  const product = getProductById(id || '');
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
+
+  useEffect(() => {
+    if (!id) return;
+    fetchProductById(id).then(p => { setProduct(p); setLoading(false); });
+  }, [id]);
+
+  if (loading) return <div className="py-20 text-center text-muted-foreground">Memuat...</div>;
 
   if (!product) {
     return (
@@ -28,7 +36,6 @@ export default function ProductDetailPage() {
         </Link>
 
         <div className="grid lg:grid-cols-2 gap-10">
-          {/* Gallery */}
           <div>
             <div className="aspect-[4/3] rounded-2xl overflow-hidden bg-muted mb-4">
               <img src={allImages[selectedImage]} alt={product.title} className="w-full h-full object-cover" />
@@ -36,11 +43,7 @@ export default function ProductDetailPage() {
             {allImages.length > 1 && (
               <div className="flex gap-3">
                 {allImages.map((img, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSelectedImage(i)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${i === selectedImage ? 'border-primary' : 'border-border'}`}
-                  >
+                  <button key={i} onClick={() => setSelectedImage(i)} className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${i === selectedImage ? 'border-primary' : 'border-border'}`}>
                     <img src={img} alt="" className="w-full h-full object-cover" />
                   </button>
                 ))}
@@ -48,7 +51,6 @@ export default function ProductDetailPage() {
             )}
           </div>
 
-          {/* Info */}
           <div>
             <p className="text-sm text-muted-foreground mb-2">{product.category}</p>
             <h1 className="font-heading text-3xl font-bold text-foreground mb-4">{product.title}</h1>

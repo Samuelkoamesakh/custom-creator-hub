@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { getProducts, saveProducts, getCategories, type Product } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { fetchProducts, fetchCategories, saveProduct, deleteProduct, type Product, type Category } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,8 +7,8 @@ import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState(getProducts());
-  const categories = getCategories();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [editing, setEditing] = useState<Product | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -17,47 +17,36 @@ export default function AdminProductsPage() {
     category: '', categorySlug: '', image: '', gallery: [],
     demoUrl: '', whatsappMessage: '',
   };
-
   const [form, setForm] = useState<Product>(emptyProduct);
 
-  const openNew = () => {
-    setForm({ ...emptyProduct, id: Date.now().toString() });
-    setEditing(null);
-    setShowForm(true);
-  };
+  const reload = () => fetchProducts().then(setProducts);
+  useEffect(() => { reload(); fetchCategories().then(setCategories); }, []);
 
-  const openEdit = (p: Product) => {
-    setForm({ ...p });
-    setEditing(p);
-    setShowForm(true);
-  };
+  const openNew = () => { setForm({ ...emptyProduct }); setEditing(null); setShowForm(true); };
+  const openEdit = (p: Product) => { setForm({ ...p }); setEditing(p); setShowForm(true); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.title || !form.categorySlug || !form.image) {
       toast.error('Judul, kategori, dan gambar wajib diisi');
       return;
     }
     const cat = categories.find(c => c.slug === form.categorySlug);
     const updated = { ...form, category: cat?.name || form.categorySlug };
-
-    let newProducts: Product[];
-    if (editing) {
-      newProducts = products.map(p => p.id === editing.id ? updated : p);
-    } else {
-      newProducts = [...products, updated];
-    }
-    saveProducts(newProducts);
-    setProducts(newProducts);
-    setShowForm(false);
-    toast.success(editing ? 'Produk diupdate!' : 'Produk ditambahkan!');
+    try {
+      await saveProduct(updated);
+      await reload();
+      setShowForm(false);
+      toast.success(editing ? 'Produk diupdate!' : 'Produk ditambahkan!');
+    } catch (e: any) { toast.error(e.message || 'Gagal menyimpan'); }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Hapus produk ini?')) return;
-    const newProducts = products.filter(p => p.id !== id);
-    saveProducts(newProducts);
-    setProducts(newProducts);
-    toast.success('Produk dihapus!');
+    try {
+      await deleteProduct(id);
+      await reload();
+      toast.success('Produk dihapus!');
+    } catch (e: any) { toast.error(e.message || 'Gagal menghapus'); }
   };
 
   return (

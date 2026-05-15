@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { getBanner, getCategories, getProducts, getTestimonials, BUSINESS_INFO } from '@/lib/data';
+import { fetchBanner, fetchCategories, fetchProducts, getTestimonials, BUSINESS_INFO, type Banner, type Category, type Product } from '@/lib/data';
 import ProductCard from '@/components/ProductCard';
 import { ArrowRight, Star, Sparkles, Palette } from 'lucide-react';
 import heroBg from '@/assets/hero-bg.jpg';
@@ -12,10 +13,17 @@ const fadeUp = {
 };
 
 export default function HomePage() {
-  const banner = getBanner();
-  const categories = getCategories();
-  const products = getProducts();
+  const [banner, setBanner] = useState<Banner | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const testimonials = getTestimonials();
+
+  useEffect(() => {
+    fetchBanner().then(setBanner);
+    fetchCategories().then(setCategories);
+    fetchProducts().then(setProducts);
+  }, []);
+
   const featuredProducts = products.slice(0, 6);
 
   return (
@@ -27,23 +35,19 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-secondary/80" />
         </div>
         <div className="container mx-auto px-4 relative z-10 py-20">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            className="max-w-2xl"
-          >
+          <motion.div initial="hidden" animate="visible" className="max-w-2xl">
             <motion.div variants={fadeUp} custom={0} className="inline-flex items-center gap-2 bg-primary/20 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Sparkles size={16} /> Layanan Terpercaya
             </motion.div>
             <motion.h1 variants={fadeUp} custom={1} className="font-heading text-4xl md:text-6xl font-bold text-secondary-foreground leading-tight mb-6">
-              {banner.headline}
+              {banner?.headline ?? ''}
             </motion.h1>
             <motion.p variants={fadeUp} custom={2} className="text-lg text-secondary-foreground/80 mb-8 leading-relaxed">
-              {banner.subheadline}
+              {banner?.subheadline ?? ''}
             </motion.p>
             <motion.div variants={fadeUp} custom={3} className="flex flex-wrap gap-4">
               <Button variant="hero" size="lg" asChild>
-                <Link to="/katalog/undangan-online">{banner.ctaText} <ArrowRight size={18} /></Link>
+                <Link to="/katalog/undangan-online">{banner?.ctaText ?? 'Lihat Katalog'} <ArrowRight size={18} /></Link>
               </Button>
               <Button variant="heroOutline" size="lg" asChild>
                 <a href={BUSINESS_INFO.whatsapp} target="_blank" rel="noopener noreferrer">Konsultasi Gratis</a>

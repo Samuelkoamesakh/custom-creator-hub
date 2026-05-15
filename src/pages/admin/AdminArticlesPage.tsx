@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { getArticles, saveArticles, type Article } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { fetchArticles, saveArticle, deleteArticle, type Article } from '@/lib/data';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
 
 export default function AdminArticlesPage() {
-  const [articles, setArticles] = useState(getArticles());
+  const [articles, setArticles] = useState<Article[]>([]);
   const [editing, setEditing] = useState<Article | null>(null);
   const [showForm, setShowForm] = useState(false);
 
@@ -15,30 +15,30 @@ export default function AdminArticlesPage() {
   const [form, setForm] = useState<Article>(empty);
   const [tagsInput, setTagsInput] = useState('');
 
-  const openNew = () => { setForm({ ...empty, id: Date.now().toString() }); setTagsInput(''); setEditing(null); setShowForm(true); };
+  const reload = () => fetchArticles().then(setArticles);
+  useEffect(() => { reload(); }, []);
+
+  const openNew = () => { setForm({ ...empty }); setTagsInput(''); setEditing(null); setShowForm(true); };
   const openEdit = (a: Article) => { setForm({ ...a }); setTagsInput(a.tags.join(', ')); setEditing(a); setShowForm(true); };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.title || !form.slug) { toast.error('Judul dan slug wajib diisi'); return; }
     const updated = { ...form, tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean) };
-    let newArticles: Article[];
-    if (editing) {
-      newArticles = articles.map(a => a.id === editing.id ? updated : a);
-    } else {
-      newArticles = [...articles, updated];
-    }
-    saveArticles(newArticles);
-    setArticles(newArticles);
-    setShowForm(false);
-    toast.success(editing ? 'Artikel diupdate!' : 'Artikel ditambahkan!');
+    try {
+      await saveArticle(updated);
+      await reload();
+      setShowForm(false);
+      toast.success(editing ? 'Artikel diupdate!' : 'Artikel ditambahkan!');
+    } catch (e: any) { toast.error(e.message || 'Gagal menyimpan'); }
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('Hapus artikel ini?')) return;
-    const newArticles = articles.filter(a => a.id !== id);
-    saveArticles(newArticles);
-    setArticles(newArticles);
-    toast.success('Artikel dihapus!');
+    try {
+      await deleteArticle(id);
+      await reload();
+      toast.success('Artikel dihapus!');
+    } catch (e: any) { toast.error(e.message || 'Gagal menghapus'); }
   };
 
   return (

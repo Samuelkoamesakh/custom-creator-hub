@@ -1,10 +1,17 @@
-import { getProducts, getArticles, getCategories } from '@/lib/data';
+import { useEffect, useState } from 'react';
+import { fetchProducts, fetchArticles, fetchCategories, type Product, type Article, type Category } from '@/lib/data';
 import { Package, FileText, FolderOpen, TrendingUp } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const products = getProducts();
-  const articles = getArticles();
-  const categories = getCategories();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchProducts().then(setProducts);
+    fetchArticles().then(setArticles);
+    fetchCategories().then(setCategories);
+  }, []);
 
   const stats = [
     { label: 'Total Produk', value: products.length, icon: Package, color: 'bg-primary/10 text-primary' },
