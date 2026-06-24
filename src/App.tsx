@@ -11,6 +11,7 @@ import ProductDetailPage from "@/pages/ProductDetailPage";
 import BlogPage from "@/pages/BlogPage";
 import ArticleDetailPage from "@/pages/ArticleDetailPage";
 import ContactPage from "@/pages/ContactPage";
+import InvoicePage from "@/pages/InvoicePage";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import AdminLoginPage from "@/pages/admin/AdminLoginPage";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/blog/:slug" element={<ArticleDetailPage />} />
             <Route path="/kontak" element={<ContactPage />} />
           </Route>
+          <Route path="/invoice" element={<InvoicePage />} />
           <Route path="/admin/login" element={<AdminLoginPage />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<AdminDashboardPage />} />
