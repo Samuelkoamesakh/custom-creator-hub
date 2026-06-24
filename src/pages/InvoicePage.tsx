@@ -259,7 +259,7 @@ export default function InvoicePage() {
                     </div>
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    Jl. Merdeka No. 123, Jakarta · 0812-3456-7890 · hello@krevastudio.id
+                    Jl. Jatijajar 1, RT.005/004 · 0812-1995-8096 · studiokreva@gmail.com
                   </p>
                 </div>
                 <div className="text-right">
