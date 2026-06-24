@@ -259,7 +259,7 @@ export default function InvoicePage() {
                     </div>
                   </div>
                   <p className="text-xs text-slate-300 leading-relaxed">
-                    Jl. Merdeka No. 123, Jakarta · 0812-3456-7890 · hello@krevastudio.id
+                    Jl. Jatijajar 1, RT.005/004 · 0812-1995-8096 · studiokreva@gmail.com
                   </p>
                 </div>
                 <div className="text-right">
@@ -323,9 +323,9 @@ export default function InvoicePage() {
               <div className="rounded-xl bg-slate-50 border border-slate-200 p-5">
                 <p className="text-[11px] uppercase tracking-wider text-slate-500 mb-3">Pembayaran via Transfer</p>
                 <div className="space-y-1 text-sm">
-                  <p className="text-slate-500">Bank <span className="text-slate-800 font-semibold">BCA</span></p>
-                  <p className="text-slate-500">A/N <span className="text-slate-800 font-semibold">KREVA STUDIO</span></p>
-                  <p className="text-slate-500">No. Rek <span className="text-slate-800 font-semibold tracking-wider">1234 3678 90</span></p>
+                  <p className="text-slate-500">Bank <span className="text-slate-800 font-semibold">UOB</span></p>
+                  <p className="text-slate-500">A/N <span className="text-slate-800 font-semibold">Samuel Anugrah Koamesakh</span></p>
+                  <p className="text-slate-500">No. Rek <span className="text-slate-800 font-semibold tracking-wider">5403719367</span></p>
                 </div>
                 {notes && (
                   <p className="mt-4 pt-3 border-t border-slate-200 text-xs italic text-slate-500">{notes}</p>
